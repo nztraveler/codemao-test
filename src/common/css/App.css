@@ -1,0 +1,121 @@
+/*头部固定nav*/
+.navbar-addmore {
+  padding: 5px 0;
+  text-align: right;
+  background-color: #fff;
+}
+
+.list-container {
+  padding-top: 40px;
+}
+
+/*收缩面板*/
+.my-panel {
+  margin-top: 0 !important;
+}
+
+.my-panel-heading {
+  padding: 5px 15px;
+}
+
+.icon-expand {
+  padding-right: 10px;
+  cursor: pointer;
+}
+
+.head-container {
+  margin: 0;
+  height: 22px;
+  line-height: 22px;
+  font-size: 0;
+  border: none;
+}
+
+.head-title {
+  display: inline-block;
+  width: 80%;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.head-btn {
+  display: inline-block;
+  vertical-align: top;
+  width: 20%;
+}
+
+/*图片上传*/
+.avatar-item {
+  position: relative;
+  float: left;
+  margin: 0 8px 8px 0;
+  padding: 8px;
+  width: 95px;
+  height: 95px;
+  text-align: center;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+.upload {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+}
+
+.input-upload {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+  outline: none !important;
+}
+
+.input-upload:disabled {
+  cursor: not-allowed;
+}
+
+.avatar-item .loading {
+  line-height: 80px;
+}
+
+/*模态窗*/
+.my-btn-group .btn {
+  margin-right: 15px;
+}
+
+.modal {
+  background-color: rgba(0, 0, 0, .5);
+}
+
+.modal.fade.in {
+  display: block;
+}
+
+/*.list-wrapper{*/
+/*position: absolute;*/
+/*top: 15px;*/
+/*bottom: 15px;*/
+/*left: 0;*/
+/*right: 0;*/
+/*width: 100%;*/
+/*min-height: 600px;*/
+/*overflow: auto;*/
+/*}*/
