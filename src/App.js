@@ -234,13 +234,14 @@ class BtnGroup extends Component {
       // 编辑按钮
       btn = (
         <div className="my-btn-group">
-          <button className="btn btn-primary" onClick={this.confirmHandle} disabled={confirmDisable}>确认</button>
-          <button className="btn btn-primary" onClick={this.cancleHandle}>取消</button>
+          <button type="button" className="btn btn-primary" onClick={this.confirmHandle} disabled={confirmDisable}>确认
+          </button>
+          <button type="button" className="btn btn-primary" onClick={this.cancleHandle}>取消</button>
         </div>
       )
     } else {
       // 查看按钮
-      btn = <button className="btn btn-success" onClick={this.modifierHandle}>修改</button>
+      btn = <button type="button" className="btn btn-success" onClick={this.modifierHandle}>修改</button>
     }
     return (
       <div className="form-group text-center">
@@ -254,42 +255,54 @@ class BtnGroup extends Component {
 class UserDetailTable extends Component {
   constructor (props) {
     super(props)
-    const data = this.props.data
-    const valid = this.props.valid
-    this.defalutFormData = {
+    this.getDefalutFormData = (props) => {
+      const data = props.data
+      const valid = props.valid
+      return {
         name: {
-          value: data.name,
+          value: data.name || '',
           valid,
           error: ''
         },
         age: {
-          value: data.age,
+          value: data.age || '',
           valid,
           error: ''
         },
         sex: {
-          value: data.sex,
+          value: data.sex || '',
           valid,
           error: ''
         },
         avatar: {
-          value: data.avatar,
+          value: data.avatar || '',
           valid,
           error: ''
         }
+      }
     }
+    this.defalutFormData = this.getDefalutFormData(this.props)
     this.inputChange = this.inputChange.bind(this)
     this.editableChange = this.editableChange.bind(this)
+    this.resetForm = this.resetForm.bind(this)
     this.confirmHandle = this.confirmHandle.bind(this)
     this.cancleHandle = this.cancleHandle.bind(this)
     this.modifierHandle = this.modifierHandle.bind(this)
     this.state = {
       form: this.defalutFormData,
-      allValidated: valid,
+      allValidated: this.props.valid,
       isEditable: this.props.isEditable,
     }
   }
 
+  //更新参数的回调
+  componentWillReceiveProps (nextProps) {
+    //判断resetModal 的prop是否改变
+    console.log(nextProps.addMoreReset, this.props.addMoreReset)
+    if (nextProps.addMoreReset !== this.props.addMoreReset) {
+      this.resetForm()
+    }
+  }
   //表单验证
   inputChange (type, value) {
     let newValue = {value, valid: true, error: ''}
@@ -325,6 +338,9 @@ class UserDetailTable extends Component {
           newValue.valid = false
         }
         break
+      }
+      default: {
+
       }
     }
     newForm = {
@@ -370,6 +386,7 @@ class UserDetailTable extends Component {
       data.uid = uid
       Storage.User.Post(data).then((aNewData) => {
         this.props.updateListData(aNewData)
+        this.cancleHandle()
         alert('提交成功')
       }, (msg) => {
         alert(msg)
@@ -383,6 +400,7 @@ class UserDetailTable extends Component {
       data.uid = uid
       Storage.User.Put(uid, data).then((aNewData) => {
         this.props.updateListData(aNewData)
+        this.cancleHandle()
         alert('修改成功')
       }, (msg) => {
         alert(msg)
@@ -393,6 +411,8 @@ class UserDetailTable extends Component {
   //取消回调
   cancleHandle () {
     if (this.props.uploadType === 'Post') {
+      // this.setState({form: this.defalutFormData})
+      // this.resetForm()
       this.props.onClose(false)
     } else if (this.props.uploadType === 'Put') {
       this.editableChange(false)
@@ -404,9 +424,18 @@ class UserDetailTable extends Component {
     this.editableChange(true)
   }
 
+  //重置表单
+  resetForm () {
+    this.setState({
+      form: this.defalutFormData,
+      allValidated: this.props.valid,
+      isEditable: this.props.isEditable,
+    })
+  }
+
   render () {
     // const data = this.props.data
-    const isEditable = this.state.isEditable
+    let isEditable = this.state.isEditable
     return (
       <div className="panel-body">
         <form className="form-horizontal">
@@ -476,7 +505,7 @@ class UserRow extends Component {
               {data.name}
             </div>
             <div className="head-btn text-right">
-              <button className="btn btn-xs btn-danger" onClick={this.deleteHandle}>删除</button>
+              <button type="button" className="btn btn-xs btn-danger" onClick={this.deleteHandle}>删除</button>
             </div>
           </h5>
 
@@ -567,6 +596,16 @@ class Modal extends Component {
 class App extends Component {
   constructor (props) {
     super(props)
+    // this.addMorePropDefalue = {
+    //   data: {},
+    //   valid: false,
+    //   isEditable: true
+    // }
+    const addMorePropDefalue = {
+      data: {},
+      valid: false,
+      isEditable: true
+    }
     this.addMoreHandle = this.addMoreHandle.bind(this)
     this.addMoreCloseHandle = this.addMoreCloseHandle.bind(this)
     this.updateListData = this.updateListData.bind(this)
@@ -575,7 +614,9 @@ class App extends Component {
     this.deleteCancleHandle = this.deleteCancleHandle.bind(this)
     this.state = {
       listData: [],
+      addMoreProp: addMorePropDefalue,
       addMoreShow: false,
+      addMoreReset: false,
       deleteConfirmShow: false,
       deleteUid: ''
     }
@@ -594,7 +635,17 @@ class App extends Component {
   }
 
   addMoreCloseHandle () {
-    this.setState({addMoreShow: false})
+    this.setState({
+      addMoreShow: false,
+      addMoreReset: !this.state.addMoreReset
+    })
+    // this.setState({
+    //   addMoreProp: {
+    //     data: {},
+    //     valid: true
+    //   }
+    // })
+
   }
 
   updateListData (newData) {
@@ -638,7 +689,7 @@ class App extends Component {
       <div>
         <div className="container navbar-fixed-top">
           <div className="navbar-addmore">
-            <button className="btn btn-sm btn-success" onClick={this.addMoreHandle}>新增</button>
+            <button type="button" className="btn btn-sm btn-success" onClick={this.addMoreHandle}>新增</button>
           </div>
         </div>
         <div className="container list-container">
@@ -647,8 +698,9 @@ class App extends Component {
           </div>
         </div>
         <Modal title="添加用户" show={this.state.addMoreShow} onClose={this.addMoreCloseHandle}>
-          <UserDetailTable data={{}} valid={false} isEditable={true} updateListData={this.updateListData}
-                           onClose={this.addMoreCloseHandle}
+          <UserDetailTable data={this.state.addMoreProp.data} valid={this.state.addMoreProp.valid}
+                           isEditable={this.state.addMoreProp.isEditable} updateListData={this.updateListData}
+                           onClose={this.addMoreCloseHandle} addMoreReset={this.state.addMoreReset}
                            uploadType='Post'/>
         </Modal>
         <Modal title="提示" show={this.state.deleteConfirmShow} onClose={this.deleteCancleHandle}>
@@ -661,5 +713,7 @@ class App extends Component {
     )
   }
 }
+
+// {...this.state.addMoreProp}
 
 export default App

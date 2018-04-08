@@ -1,4 +1,7 @@
 /*头部固定nav*/
+body {
+  background-image: url("http://ww1.sinaimg.cn/large/a7f60d8agy1fprmgh5gsnj20dw0dwt9i.jpg");
+}
 .navbar-addmore {
   padding: 5px 0;
   text-align: right;
